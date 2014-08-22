@@ -1,0 +1,104 @@
+#streetwalk {
+    height: 10000px;
+}
+
+.streetwalk-loading {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    /*transform*/
+    -webkit-transform:translate(-50%, -50%);
+       -moz-transform:translate(-50%, -50%);
+        -ms-transform:translate(-50%, -50%);
+         -o-transform:translate(-50%, -50%);
+            transform:translate(-50%, -50%);
+}
+
+.streetwalk-title {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    /*transform*/
+    -webkit-transform:translate(-50%, -50%);
+       -moz-transform:translate(-50%, -50%);
+        -ms-transform:translate(-50%, -50%);
+         -o-transform:translate(-50%, -50%);
+            transform:translate(-50%, -50%);
+
+    h1 {
+        color:white;
+        font-size:4rem;
+        font-weight:bold;
+    }
+
+    .arrow-down {
+        color:white;
+        font-size:4rem;
+        text-align: center;
+    }
+}
+
+.loadingNextWay {
+
+    h1 {
+        color:white;
+        font-size:4rem;
+        font-weight:bold;
+
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        /*transform*/
+        -webkit-transform:translate(-50%, -50%);
+           -moz-transform:translate(-50%, -50%);
+            -ms-transform:translate(-50%, -50%);
+             -o-transform:translate(-50%, -50%);
+                transform:translate(-50%, -50%);
+    }
+}
+
+.streetwalkImg,.element-fixed,.blurImg {
+    position: fixed;
+    top:0;
+    bottom:0;
+    right:0;
+    left:0;
+    width:100%;
+    height:100%;
+}
+
+
+.element-fixed {
+    display:none;
+}
+
+.arrow {
+    width: 200px;
+    fill:white;
+}
+
+.chooseWayContent {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    /*transform*/
+    -webkit-transform:translate(-50%, -50%);
+       -moz-transform:translate(-50%, -50%);
+        -ms-transform:translate(-50%, -50%);
+         -o-transform:translate(-50%, -50%);
+            transform:translate(-50%, -50%);
+}
+
+.trame-video {
+    background: url("../../images/trame-video.png") repeat;
+    height: 100%;
+    position: fixed;
+    width: 100%;
+    -webkit-transition: opacity 0.5s ease;
+    opacity: 1;
+}
+
+body.not-moving .trame-video {
+    opacity: 0;
+    -webkit-transition: opacity 0.5s ease;
+}
