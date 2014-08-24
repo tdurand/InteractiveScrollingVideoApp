@@ -40,36 +40,38 @@ define(['underscore'],function(_) {
 
             var newArraySegments = [];
 
-
             $.each(arraySegments, function(index,segment) {
-                 var midPoint = self._midpointcoordinates(segment[0],segment[1]);
+                 var midPointCoordinates = self._midpointcoordinates(segment[0].coordinates,segment[1].coordinates);
+
                  var segmentFirstPoint = segment[0];
                  var segmentLastPoint = segment[1];
+
+                 var positionMidPoint = Math.round((segmentLastPoint.position-segmentFirstPoint.position)/2 + segmentFirstPoint.position);
+                 //if it already exist
+                 if(arrayPoints[positionMidPoint]) {
+                    //try nearby
+                    if(arrayPoints[positionMidPoint+1]) {
+                        //exist
+                        if(arrayPoints[positionMidPoint-1]) {
+                            //Can pass here
+                            console.log("UNABLE TO FIND A SLOT FOR "+ midPointCoordinates + " position : " + positionMidPoint);
+                        }
+                        else {
+                            positionMidPoint = positionMidPoint - 1;
+                        }
+                    }
+                    else {
+                        positionMidPoint = positionMidPoint + 1;
+                    }
+                 }
+
+                 var midPoint = { coordinates: midPointCoordinates, position: positionMidPoint };
+
                  newArraySegments.push([segmentFirstPoint,midPoint]);
 
-                 // L.marker(midPoint).addTo(map);
-                 // This is good, the midPoints are correctly calculated
-                 // Store the midpoint at the right place in the array
-                 // 1,200
-                 // 5
-                 // 100
-                 // 50
-                 // 150
-                 // 
-                 arrayPoints.push(midPoint);
-
-
-                 //have the exact coordinates number
-                 if(newArraySegments.length+1 >= nbTotalPoints) {
-                    return false;
-                 }
+                 arrayPoints[positionMidPoint] = midPoint.coordinates;
 
                  newArraySegments.push([midPoint,segmentLastPoint]);
-
-
-                 if(newArraySegments.length+1 >= nbTotalPoints) {
-                    return false;
-                 }
             });
 
             if(newArraySegments.length+1 >= nbTotalPoints) {
@@ -88,25 +90,24 @@ define(['underscore'],function(_) {
 
             var self = this;
 
-            var arraySegments = [[pointA,pointB]];
-            var arrayPoints = [pointA,pointB];
+            var objectPointA = {
+                        coordinates: pointA,
+                        position: 0
+                };
 
-            //TODO
-            //We have all the points bug in disorder [ N°1, N°200 , N°100 , N°50 , N°150 , N°25 ,  ... ]
-            //The scale is not the same at the end in order to have the right number of point
-            //TODO REORDER AT THE END WITH A SMART SORT METHOD
-            //
-            //IF WE DO NOT BREAK IN THE generateIntermediaSegments, we have all the points but maybe more, 
-            //because it goes exponentially, 2, 3, 5, 9, 17, 33 ..., so we can't have the right number spaced
-            //equally easily
+            var objectPointB = {
+                        coordinates: pointB,
+                        position: nbTotalPoints-1
+                };
 
-            //var arrayWithAllSegments = self.generateIntermediateSegments(arraySegments,arrayPoints,nbTotalPoints);
+            var arraySegments = [[objectPointA,objectPointB]];
 
-            //var allIntermediatesPoints = _.uniq(_.flatten(arrayWithAllSegments,true));
+            var collectionPoints = {};
 
-            var allIntermediatesPoints = self.generateIntermediateSegments(arraySegments,arrayPoints,nbTotalPoints);
+            collectionPoints[objectPointA.position] = objectPointA.coordinates;
+            collectionPoints[objectPointB.position] = objectPointB.coordinates;
 
-            console.log(allIntermediatesPoints.length);
+            var allIntermediatesPoints = self.generateIntermediateSegments(arraySegments,collectionPoints,nbTotalPoints);
 
             return allIntermediatesPoints;
 

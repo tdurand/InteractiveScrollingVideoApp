@@ -39,34 +39,51 @@ function($, _, Backbone,
     },
 
     initMap: function() {
+        var self = this;
+
         self.map = L.mapbox.map('streetwalk-map', 'tdurand.ja7g8ce3',{
             accessToken: 'pk.eyJ1IjoidGR1cmFuZCIsImEiOiI0T1ZEWlRVIn0.1PEGeiEWz6RUBfZq9Bvy7Q',
             zoomControl: false,
             attributionControl: false
         });
 
-        var intermediatePoints = GeoUtils.generateIntermediatePoints([
-                6.2581378028655275,
-                -75.61222583055496
-                ],
-                [
-                6.257823188177031,
-                -75.61136215925217
-                ],200);
-
-        L.marker([
-                6.257823188177031,
-                -75.61136215925217
-                ],{ title : "End "}).addTo(self.map);
-
-        $.each(intermediatePoints, function(index, val) {
-             L.marker(val).addTo(self.map);
+        self.map.on("load", function() {
+            self.mapLoaded = true;
+            self.updateMarkerPosition(self.currentStill.id);
         });
 
-        map = self.map;
+        self.intermediatePoints = GeoUtils.generateIntermediatePoints([
+                6.258111140611143,
+                -75.61215072870255
+                ],
+                [
+                6.257839185538634,
+                -75.61139702796936
+                ],
+                209);
 
-        console.log(intermediatePoints.length);
+        //Center map every 500ms
+        setInterval(function() {
+            self.map.panTo(self.intermediatePoints[self.currentStill.id]);
+        },500);
+    },
 
+    updateMarkerPosition: function(stillId) {
+        var self = this;
+
+        if(self.markerMap) {
+            self.markerMap.setLatLng(self.intermediatePoints[stillId]);
+        }
+        else {
+            if(self.map && self.intermediatePoints) {
+                self.markerMap = L.marker(self.intermediatePoints[stillId]).addTo(self.map);
+                if(stillId <= 1) {
+                    self.map.panTo(self.intermediatePoints[stillId]);
+                }
+            }
+            
+        }
+        
     },
 
     initSounds: function() {
@@ -151,6 +168,8 @@ function($, _, Backbone,
 
             console.log("Load IMG NB instead:" +self.currentStill.id);
         }
+
+        self.updateMarkerPosition(self.currentStill.id);
 
         $(self.elImg).attr("src", self.currentStill.get("srcLowRes"));
 
