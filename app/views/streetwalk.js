@@ -2,12 +2,14 @@ define(['jquery',
         'underscore',
         'backbone',
         'models/Stills',
+        'utils/GeoUtils',
         'text!templates/streetwalk/streetWalkViewTemplate.html',
         'text!templates/streetwalk/streetWalkLoadingViewTemplate.html',
         'howl'
         ],
 function($, _, Backbone,
                 StillsCollection,
+                GeoUtils,
                 streetWalkViewTemplate,
                 streetWalkLoadingViewTemplate){
 
@@ -36,6 +38,45 @@ function($, _, Backbone,
         }
     },
 
+    initMap: function() {
+        self.map = L.mapbox.map('streetwalk-map', 'tdurand.ja7g8ce3',{
+            accessToken: 'pk.eyJ1IjoidGR1cmFuZCIsImEiOiI0T1ZEWlRVIn0.1PEGeiEWz6RUBfZq9Bvy7Q',
+            zoomControl: false,
+            attributionControl: false
+        });
+
+        var intermediatePoints = GeoUtils.generateIntermediatePoints([
+                6.2581378028655275,
+                -75.61222583055496
+                ],
+                [
+                6.257823188177031,
+                -75.61136215925217
+                ],200);
+
+        L.marker([
+                6.257823188177031,
+                -75.61136215925217
+                ],{ title : "End "}).addTo(self.map);
+
+        $.each(intermediatePoints, function(index, val) {
+             L.marker(val).addTo(self.map);
+        });
+
+        map = self.map;
+
+        console.log(intermediatePoints.length);
+
+    },
+
+    initSounds: function() {
+        //Sound
+        pregonnegra = new Howl({
+          urls: ['data/sounds/pregonnegra.mp3'],
+          loop:true
+        });
+    },
+
     prepare:function() {
 
         var self = this;
@@ -60,13 +101,6 @@ function($, _, Backbone,
         });
 
         self.renderLoading();
-
-
-        //Sound
-        pregonnegra = new Howl({
-          urls: ['data/sounds/pregonnegra.mp3'],
-          loop:true
-        });
 
         window.scrollTo(0,0);
 
@@ -155,6 +189,8 @@ function($, _, Backbone,
         }
 
         self.computeAnimation();
+        self.initMap();
+        self.initSounds();
     },
 
     renderElements: function(imgNb) {

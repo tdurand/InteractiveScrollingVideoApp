@@ -14,6 +14,16 @@
             transform:translate(-50%, -50%);
 }
 
+.streetwalk-map {
+    width: 150px;
+    height: 150px;
+    position: fixed;
+    top:20px;
+    right:20px;
+
+    background-color: red;
+}
+
 .streetwalk-title {
     position: absolute;
     left: 50%;
