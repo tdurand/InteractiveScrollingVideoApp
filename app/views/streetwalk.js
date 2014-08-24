@@ -73,6 +73,8 @@ function($, _, Backbone,
 
     initSounds: function() {
         var self = this;
+
+        var soundPosition = [6.257988494223416,-75.6118181347847];
         //Sound
         self.pregonnegra = new Sound({
             position: [6.257988494223416,-75.6118181347847],
@@ -80,6 +82,10 @@ function($, _, Backbone,
         });
 
         self.pregonnegra.sound.play();
+
+        setTimeout(function() {
+            L.marker(soundPosition).addTo(self.map);
+        },1000);
     },
 
     prepare:function() {
