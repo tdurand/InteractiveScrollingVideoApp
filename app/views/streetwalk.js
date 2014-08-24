@@ -2,13 +2,14 @@ define(['jquery',
         'underscore',
         'backbone',
         'models/Stills',
+        'models/Sound',
         'utils/GeoUtils',
         'text!templates/streetwalk/streetWalkViewTemplate.html',
-        'text!templates/streetwalk/streetWalkLoadingViewTemplate.html',
-        'howl'
+        'text!templates/streetwalk/streetWalkLoadingViewTemplate.html'
         ],
 function($, _, Backbone,
                 StillsCollection,
+                Sound,
                 GeoUtils,
                 streetWalkViewTemplate,
                 streetWalkLoadingViewTemplate){
@@ -27,6 +28,8 @@ function($, _, Backbone,
 
     initialize : function(params) {
         var self = this;
+
+        GeoUtils.init();
 
         if(params.way === undefined) {
             self.way = "casaparepositionstabilized";
@@ -68,30 +71,15 @@ function($, _, Backbone,
         },500);
     },
 
-    updateMarkerPosition: function(stillId) {
-        var self = this;
-
-        if(self.markerMap) {
-            self.markerMap.setLatLng(self.intermediatePoints[stillId]);
-        }
-        else {
-            if(self.map && self.intermediatePoints) {
-                self.markerMap = L.marker(self.intermediatePoints[stillId]).addTo(self.map);
-                if(stillId <= 1) {
-                    self.map.panTo(self.intermediatePoints[stillId]);
-                }
-            }
-            
-        }
-        
-    },
-
     initSounds: function() {
+        var self = this;
         //Sound
-        pregonnegra = new Howl({
-          urls: ['data/sounds/pregonnegra.mp3'],
-          loop:true
+        self.pregonnegra = new Sound({
+            position: [6.258119139287606,-75.61175376176834],
+            name: "pregonnegra"
         });
+
+        self.pregonnegra.sound.play();
     },
 
     prepare:function() {
@@ -276,6 +264,11 @@ function($, _, Backbone,
                 $("body").addClass('not-moving');
             },80);
 
+            //Update sounds volume
+            if(self.pregonnegra) {
+                self.pregonnegra.updateSound(self.intermediatePoints[self.currentStill.id]);
+            }
+
         }
 
         window.requestAnimationFrame(function() {
@@ -283,6 +276,24 @@ function($, _, Backbone,
         });
 
         }
+    },
+
+    updateMarkerPosition: function(stillId) {
+        var self = this;
+
+        if(self.markerMap) {
+            self.markerMap.setLatLng(self.intermediatePoints[stillId]);
+        }
+        else {
+            if(self.map && self.intermediatePoints) {
+                self.markerMap = L.marker(self.intermediatePoints[stillId]).addTo(self.map);
+                if(stillId <= 1) {
+                    self.map.panTo(self.intermediatePoints[stillId]);
+                }
+            }
+            
+        }
+        
     },
 
 

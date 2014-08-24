@@ -2,12 +2,7 @@ define(['underscore'],function(_) {
 
     var GeoUtils = {
 
-        _midpointcoordinates: function(point1,point2) {
-
-            var lat1 = point1[0];
-            var lon1 = point1[1];
-            var lat2 = point2[0];
-            var lon2 = point2[1];
+        init: function() {
             // Converts from degrees to radians.
             Math.toRadians = function(degrees) {
               return degrees * Math.PI / 180;
@@ -17,7 +12,27 @@ define(['underscore'],function(_) {
             Math.toDegrees = function(radians) {
               return radians * 180 / Math.PI;
             };
+        },
 
+        distance: function(point1,point2) {
+
+                // Earths mean radius in meter
+                var R = 6378137;
+                var dLat = Math.toRadians(point2[0] - point1[0]);
+                var dLong = Math.toRadians(point2[1] - point1[1]);
+                var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(Math.toRadians(point1[0])) * Math.cos(Math.toRadians(point2[0])) * Math.sin(dLong / 2) * Math.sin(dLong / 2);
+                var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                var d = R * c;      // d = the distance in meter
+            
+                return d;
+        },
+
+        _midpointcoordinates: function(point1,point2) {
+
+            var lat1 = point1[0];
+            var lon1 = point1[1];
+            var lat2 = point2[0];
+            var lon2 = point2[1];
                 
             var dLon = Math.toRadians(lon2 - lon1);
 
