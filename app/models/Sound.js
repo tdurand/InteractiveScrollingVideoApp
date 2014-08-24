@@ -25,10 +25,13 @@ function($, _, Backbone, GeoUtils){
 
         self.sound = new Howl({
           urls: ['data/sounds/' + name + '.mp3'],
-          loop:true
+          loop:true,
+          volume:0
         });
 
         self.sound.play();
+
+        sound = self.sound;
     },
 
     updateVolume: function(newUserPosition) {
@@ -54,6 +57,7 @@ function($, _, Backbone, GeoUtils){
 
         // Add POV heading offset
         //angle -= heading;
+        //TODO CALCULATE HEADING POSITION WITH THE NORD
 
         // Convert angle to range between -180 and +180
         if (angle < -180)       angle += 360;
@@ -67,6 +71,8 @@ function($, _, Backbone, GeoUtils){
             var x = Math.abs(panPosition) - 1;
             panPosition = (panPosition > 0) ? 1 - x : -1 + x;
         }
+
+        console.log("PANPOSITION " + panPosition);
 
         // Set the new pan poition
         self.sound.pos3d(panPosition, 1, 1);
@@ -89,6 +95,8 @@ function($, _, Backbone, GeoUtils){
     calculateVolume: function(distance){
         // Calculate volume by using Inverse Square Law
         var vol = 1 / (distance * distance);
+        vol = vol*20;
+        console.log("UPDATE VOLUME: " + vol);
         return vol;
     }
 

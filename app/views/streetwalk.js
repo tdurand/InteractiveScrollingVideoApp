@@ -75,7 +75,7 @@ function($, _, Backbone,
         var self = this;
         //Sound
         self.pregonnegra = new Sound({
-            position: [6.258119139287606,-75.61175376176834],
+            position: [6.257988494223416,-75.6118181347847],
             name: "pregonnegra"
         });
 
