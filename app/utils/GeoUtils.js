@@ -16,15 +16,35 @@ define(['underscore'],function(_) {
 
         distance: function(point1,point2) {
 
-                // Earths mean radius in meter
-                var R = 6378137;
-                var dLat = Math.toRadians(point2[0] - point1[0]);
-                var dLong = Math.toRadians(point2[1] - point1[1]);
-                var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(Math.toRadians(point1[0])) * Math.cos(Math.toRadians(point2[0])) * Math.sin(dLong / 2) * Math.sin(dLong / 2);
-                var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                var d = R * c;      // d = the distance in meter
-            
-                return d;
+            // Earths mean radius in meter
+            var R = 6378137;
+            var dLat = Math.toRadians(point2[0] - point1[0]);
+            var dLong = Math.toRadians(point2[1] - point1[1]);
+            var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(Math.toRadians(point1[0])) * Math.cos(Math.toRadians(point2[0])) * Math.sin(dLong / 2) * Math.sin(dLong / 2);
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            var d = R * c;      // d = the distance in meter
+        
+            return d;
+        },
+
+        getBearing: function(point1,point2){
+
+          startLat = Math.toRadians(point1[0]);
+          startLong = Math.toRadians(point1[1]);
+          endLat = Math.toRadians(point2[0]);
+          endLong = Math.toRadians(point2[1]);
+
+          var dLong = endLong - startLong;
+
+          var dPhi = Math.log(Math.tan(endLat/2.0+Math.PI/4.0)/Math.tan(startLat/2.0+Math.PI/4.0));
+          if (Math.abs(dLong) > Math.PI){
+            if (dLong > 0.0)
+               dLong = -(2.0 * Math.PI - dLong);
+            else
+               dLong = (2.0 * Math.PI + dLong);
+          }
+
+          return (Math.toDegrees(Math.atan2(dLong, dPhi)) + 360.0) % 360.0;
         },
 
         _midpointcoordinates: function(point1,point2) {
