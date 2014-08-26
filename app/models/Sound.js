@@ -21,6 +21,7 @@ function($, _, Backbone, GeoUtils){
 
         var name = self.get("name");
         self.position = self.get("position");
+        self.db = self.get("db");
 
 
         self.sound = new Howl({
@@ -30,8 +31,6 @@ function($, _, Backbone, GeoUtils){
         });
 
         self.sound.play();
-
-        sound = self.sound;
     },
 
     updateVolume: function(newUserPosition) {
@@ -101,9 +100,10 @@ function($, _, Backbone, GeoUtils){
     },
 
     calculateVolume: function(distance){
+        var self = this;
         // Calculate volume by using Inverse Square Law
         var vol = 1 / (distance * distance);
-        vol = vol*5;
+        vol = vol*self.db;
         console.log("UPDATE VOLUME: " + vol);
         return vol;
     }

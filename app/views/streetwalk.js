@@ -2,14 +2,14 @@ define(['jquery',
         'underscore',
         'backbone',
         'models/Stills',
-        'models/Sound',
+        'models/Sounds',
         'utils/GeoUtils',
         'text!templates/streetwalk/streetWalkViewTemplate.html',
         'text!templates/streetwalk/streetWalkLoadingViewTemplate.html'
         ],
 function($, _, Backbone,
                 StillsCollection,
-                Sound,
+                Sounds,
                 GeoUtils,
                 streetWalkViewTemplate,
                 streetWalkLoadingViewTemplate){
@@ -23,7 +23,7 @@ function($, _, Backbone,
     bodyHeight:10000,
 
     events:{
-        
+        "click .mute-sounds ":"muteSounds"
     },
 
     initialize : function(params) {
@@ -74,17 +74,11 @@ function($, _, Backbone,
     initSounds: function() {
         var self = this;
 
-        var soundPosition = [6.258145801541596,-75.61173766851425];
-        //Sound
-        self.pregonnegra = new Sound({
-            position: soundPosition,
-            name: "pregonnegra"
-        });
-
-        self.pregonnegra.sound.play();
+        self.sounds = new Sounds();
+        self.sounds.init();
 
         setTimeout(function() {
-            L.marker(soundPosition).addTo(self.map);
+            self.sounds.addMarkersToMap(self.map);
         },1000);
     },
 
@@ -201,9 +195,9 @@ function($, _, Backbone,
             }));
         }
 
-        self.computeAnimation();
         self.initMap();
         self.initSounds();
+        self.computeAnimation(true);
     },
 
     renderElements: function(imgNb) {
@@ -226,7 +220,7 @@ function($, _, Backbone,
 
     },
 
-    computeAnimation: function() {
+    computeAnimation: function(firstStill) {
         var self = this;
 
         if(self.animating) {
@@ -235,7 +229,7 @@ function($, _, Backbone,
 
         self.targetPosition  = window.scrollY;
 
-        if( Math.floor(self.targetPosition) != Math.floor(self.currentPosition)) {
+        if( Math.floor(self.targetPosition) != Math.floor(self.currentPosition) || firstStill) {
             //console.log("Compute We have moved : scroll position " + self.currentPosition);
             var deaccelerate = Math.max( Math.min( Math.abs(self.targetPosition - self.currentPosition) * 5000 , 10 ) , 2 );
             self.currentPosition += (self.targetPosition - self.currentPosition) / deaccelerate;
@@ -271,8 +265,8 @@ function($, _, Backbone,
             },80);
 
             //Update sounds volume
-            if(self.pregonnegra) {
-                self.pregonnegra.updateSound(self.intermediatePoints[self.currentStill.id]);
+            if(self.sounds) {
+                self.sounds.updateSounds(self.intermediatePoints[self.currentStill.id]);
             }
 
         }
@@ -300,6 +294,11 @@ function($, _, Backbone,
             
         }
         
+    },
+
+    muteSounds: function() {
+        var self = this;
+        self.sounds.mute();
     },
 
 
