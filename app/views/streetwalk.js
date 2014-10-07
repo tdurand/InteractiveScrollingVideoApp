@@ -33,7 +33,7 @@ function($, _, Backbone,
 
         if(params.way === undefined) {
             self.way = "casaparepositionstabilized";
-            self.nbImg = "209";
+            self.nbImg = "20";
         }
         else {
             self.way = params.way;
@@ -63,9 +63,12 @@ function($, _, Backbone,
                 6.257839185538634,
                 -75.61139702796936
                 ],
-                209);
+                20);
+
+        console.log(JSON.stringify(self.intermediatePoints));
 
         //Center map every 500ms
+        //TODO ONLY IF POSITION CHANGED
         setInterval(function() {
             self.map.panTo(self.intermediatePoints[self.currentStill.id]);
         },500);

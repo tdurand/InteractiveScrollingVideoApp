@@ -1,10 +1,12 @@
 define(['jquery',
         'underscore',
         'backbone',
-        'models/Still'
+        'models/Still',
+        "utils/GeoUtils"
         ],
 function($, _, Backbone,
-                Still){
+                Still,
+                GeoUtils){
 
   var Stills = Backbone.Collection.extend({
 
@@ -27,6 +29,18 @@ function($, _, Backbone,
 
         var accurate = 5;
 
+        var globalIntermediatePoints = GeoUtils.generateIntermediatePoints([
+                6.258111140611143,
+                -75.61215072870255
+                ],
+                [
+                6.257839185538634,
+                -75.61139702796936
+                ],
+                20);
+
+        
+
         //TODO : better progressive loading, populate first frames first
         $.each([20,10,5,2,1], function(index, val) {
 
@@ -43,8 +57,11 @@ function($, _, Backbone,
                         id:i,
                         // srcLowRes:"http://tdurand.github.io/scrollingvideo/"+self.pathToStills+"way"+self.lpad(i, 3)+".jpg",
                         // srcHighRes:"http://tdurand.github.io/scrollingvideo/"+self.pathToStills+"way"+self.lpad(i, 3)+".jpg"
-                        srcLowRes:self.pathToStills+"/lowres/way"+self.lpad(i, 3)+".jpg",
-                        srcHighRes:self.pathToStills+"/highres/way"+self.lpad(i, 3)+".jpg"
+                        // srcLowRes:self.pathToStills+"/lowres/way"+self.lpad(i, 3)+".jpg",
+                        // srcHighRes:self.pathToStills+"/highres/way"+self.lpad(i, 3)+".jpg",
+                        srcLowRes:"http://maps.googleapis.com/maps/api/streetview?size=500x280&location="+globalIntermediatePoints[i][0]+","+globalIntermediatePoints[i][1]+"&fov=180&heading=100&pitch=10&key=AIzaSyBcQbYugBpXYmTvHVqBmmTa6EM0PHZZ28k",
+                        srcHighRes:"http://maps.googleapis.com/maps/api/streetview?size=500x280&location="+globalIntermediatePoints[i][0]+","+globalIntermediatePoints[i][1]+"&fov=180&heading=100&pitch=10&key=AIzaSyBcQbYugBpXYmTvHVqBmmTa6EM0PHZZ28k"
+
                     });
 
                     still.on("imgloaded", function() {
