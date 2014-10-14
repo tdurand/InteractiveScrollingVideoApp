@@ -5,7 +5,8 @@ define(['jquery',
         'models/Sounds',
         'utils/GeoUtils',
         'text!templates/streetwalk/streetWalkViewTemplate.html',
-        'text!templates/streetwalk/streetWalkLoadingViewTemplate.html'
+        'text!templates/streetwalk/streetWalkLoadingViewTemplate.html',
+        'mapbox'
         ],
 function($, _, Backbone,
                 StillsCollection,
@@ -33,7 +34,7 @@ function($, _, Backbone,
 
         if(params.way === undefined) {
             self.way = "casaparepositionstabilized";
-            self.nbImg = "20";
+            self.nbImg = globalNbPoints;
         }
         else {
             self.way = params.way;
@@ -44,7 +45,7 @@ function($, _, Backbone,
     initMap: function() {
         var self = this;
 
-        self.map = L.mapbox.map('streetwalk-map', 'tdurand.ja7g8ce3',{
+        self.map = L.mapbox.map('streetwalk-map', 'tdurand.jn29943n',{
             accessToken: 'pk.eyJ1IjoidGR1cmFuZCIsImEiOiI0T1ZEWlRVIn0.1PEGeiEWz6RUBfZq9Bvy7Q',
             zoomControl: false,
             attributionControl: false
@@ -53,25 +54,20 @@ function($, _, Backbone,
         self.map.on("load", function() {
             self.mapLoaded = true;
             self.updateMarkerPosition(self.currentStill.id);
+
+            //Center map every 500ms
+            //TODO ONLY IF POSITION CHANGED
+            setInterval(function() {
+                self.map.panTo(self.intermediatePoints[self.currentStill.id]);
+            },500);
         });
 
-        self.intermediatePoints = GeoUtils.generateIntermediatePoints([
-                6.258111140611143,
-                -75.61215072870255
-                ],
-                [
-                6.257839185538634,
-                -75.61139702796936
-                ],
-                20);
+        self.intermediatePoints = GeoUtils.generateIntermediatePointsOfArray(globalLatLongPoints,
+                globalNbPoints);
+
+        window.globalIntermediatePoints = self.intermediatePoints;
 
         console.log(JSON.stringify(self.intermediatePoints));
-
-        //Center map every 500ms
-        //TODO ONLY IF POSITION CHANGED
-        setInterval(function() {
-            self.map.panTo(self.intermediatePoints[self.currentStill.id]);
-        },500);
     },
 
     initSounds: function() {
@@ -283,6 +279,10 @@ function($, _, Backbone,
 
     updateMarkerPosition: function(stillId) {
         var self = this;
+
+        if(!self.mapLoaded) {
+            return;
+        }
 
         if(self.markerMap) {
             self.markerMap.setLatLng(self.intermediatePoints[stillId]);

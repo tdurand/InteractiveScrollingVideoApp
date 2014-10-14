@@ -28,23 +28,18 @@ function($, _, Backbone,
         var self = this;
 
         var accurate = 5;
+        var bearingTemp = 0;
 
-        var globalIntermediatePoints = GeoUtils.generateIntermediatePoints([
-                6.258111140611143,
-                -75.61215072870255
-                ],
-                [
-                6.257839185538634,
-                -75.61139702796936
-                ],
-                20);
+
+        self.intermediatePoints = GeoUtils.generateIntermediatePointsOfArray(globalLatLongPoints,
+                globalNbPoints);
 
         
 
         //TODO : better progressive loading, populate first frames first
-        $.each([20,10,5,2,1], function(index, val) {
+        $.each([1], function(index, val) {
 
-            for (var i = 0; i <= self.nbImages; i+=val) {
+            for (var i = 0; i < self.nbImages; i+=val) {
 
                 if(self.loadingStopped) {
                     break;
@@ -53,14 +48,18 @@ function($, _, Backbone,
                 //If still isn't yet loaded
                 if(self.get(i) === undefined) {
 
+                    if(i < self.nbImages - 1) {
+                        bearingTemp = GeoUtils.getBearing(self.intermediatePoints[i],self.intermediatePoints[i+1]);
+                    }
+
                     var still = new Still({
                         id:i,
                         // srcLowRes:"http://tdurand.github.io/scrollingvideo/"+self.pathToStills+"way"+self.lpad(i, 3)+".jpg",
                         // srcHighRes:"http://tdurand.github.io/scrollingvideo/"+self.pathToStills+"way"+self.lpad(i, 3)+".jpg"
                         // srcLowRes:self.pathToStills+"/lowres/way"+self.lpad(i, 3)+".jpg",
                         // srcHighRes:self.pathToStills+"/highres/way"+self.lpad(i, 3)+".jpg",
-                        srcLowRes:"http://maps.googleapis.com/maps/api/streetview?size=500x280&location="+globalIntermediatePoints[i][0]+","+globalIntermediatePoints[i][1]+"&fov=180&heading=100&pitch=10&key=AIzaSyBcQbYugBpXYmTvHVqBmmTa6EM0PHZZ28k",
-                        srcHighRes:"http://maps.googleapis.com/maps/api/streetview?size=500x280&location="+globalIntermediatePoints[i][0]+","+globalIntermediatePoints[i][1]+"&fov=180&heading=100&pitch=10&key=AIzaSyBcQbYugBpXYmTvHVqBmmTa6EM0PHZZ28k"
+                        srcLowRes:"http://maps.googleapis.com/maps/api/streetview?size=500x280&location="+self.intermediatePoints[i][0]+","+self.intermediatePoints[i][1]+"&fov=180&heading="+bearingTemp+"&pitch=5&key=AIzaSyBcQbYugBpXYmTvHVqBmmTa6EM0PHZZ28k",
+                        srcHighRes:"http://maps.googleapis.com/maps/api/streetview?size=500x280&location="+self.intermediatePoints[i][0]+","+self.intermediatePoints[i][1]+"&fov=180&heading="+bearingTemp+"&pitch=5&key=AIzaSyBcQbYugBpXYmTvHVqBmmTa6EM0PHZZ28k"
 
                     });
 
