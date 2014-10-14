@@ -37,8 +37,9 @@ function($, _, Backbone,
         
 
         //TODO : better progressive loading, populate first frames first
-        //$.each([1], function(index, val) {
+        //$.each([20,10,5,2,1], function(index, val) {
 
+            //for (var i = 0; i < self.nbImages; i+val) {
             for (var i = 0; i < self.nbImages; i++) {
 
                 if(self.loadingStopped) {
