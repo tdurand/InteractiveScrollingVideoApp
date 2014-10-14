@@ -37,9 +37,9 @@ function($, _, Backbone,
         
 
         //TODO : better progressive loading, populate first frames first
-        $.each([1], function(index, val) {
+        //$.each([1], function(index, val) {
 
-            for (var i = 0; i < self.nbImages; i+=val) {
+            for (var i = 0; i < self.nbImages; i++) {
 
                 if(self.loadingStopped) {
                     break;
@@ -81,7 +81,7 @@ function($, _, Backbone,
                 
             }
              
-        });
+        // });
     },
 
     lpad: function(value, padding) {
