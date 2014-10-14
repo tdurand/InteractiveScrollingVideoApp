@@ -125,6 +125,10 @@ define(['underscore'],function(_) {
 
             var self = this;
 
+            if(nbTotalPoints == 2) {
+                return {0:pointA,1:pointB};
+            }
+
             var objectPointA = {
                         coordinates: pointA,
                         position: 0
@@ -143,6 +147,60 @@ define(['underscore'],function(_) {
             collectionPoints[objectPointB.position] = objectPointB.coordinates;
 
             var allIntermediatesPoints = self.generateIntermediateSegments(arraySegments,collectionPoints,nbTotalPoints);
+
+            return allIntermediatesPoints;
+
+        },
+
+        generateIntermediatePointsOfArray: function(arrayPoints,nbTotalPoints) {
+
+            var self = this;
+
+            var allIntermediatesPoints = {};
+            var collectionOfSingleSegments = [];
+
+            var individualSegment = {};
+            var nbPointsOnThisSegment = 0;
+
+            var distanceTotal = 0;
+            var nbTotalPointsGenerated = 0;
+
+            if(arrayPoints.length < 3 ) {
+                allIntermediatesPoints = self.generateIntermediatePoints(arrayPoints[0],arrayPoints[1]);
+            }
+            else {
+                //Generate distance of all individual segments and compute total distance
+                for (var i = 0; i < arrayPoints.length -1; i++) {
+                    individualSegment = {};
+                    individualSegment.pointStart = arrayPoints[i];
+                    individualSegment.pointEnd = arrayPoints[i+1];
+                    individualSegment.distance = self.distance(individualSegment.pointStart,individualSegment.pointEnd);
+                    distanceTotal += individualSegment.distance;
+                    collectionOfSingleSegments.push(individualSegment);
+                }
+
+                //then generate intermediate points for all individual segments
+                for (var j = 0; j < collectionOfSingleSegments.length; j++) {
+
+                    individualSegment = collectionOfSingleSegments[j];
+                    nbPointsOnThisSegment = Math.round(individualSegment.distance * nbTotalPoints / distanceTotal);
+
+                    //if last segment, generate exact number of points
+                    if(j == collectionOfSingleSegments.length - 1) {
+                        nbPointsOnThisSegment = nbTotalPoints - nbTotalPointsGenerated;
+                    }
+
+                    individualSegment.intermediatePoints = self.generateIntermediatePoints(individualSegment.pointStart,individualSegment.pointEnd,nbPointsOnThisSegment);
+
+                    $.each(individualSegment.intermediatePoints,function(index,intermediatePoint,index2) {
+                        allIntermediatesPoints[nbTotalPointsGenerated + parseInt(index,10)] = intermediatePoint;
+                    });
+
+                    nbTotalPointsGenerated += nbPointsOnThisSegment;
+
+                }
+
+            }
 
             return allIntermediatesPoints;
 
