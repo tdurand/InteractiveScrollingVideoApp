@@ -1,9 +1,6 @@
 define(['underscore'],function(_) {
 
-    var GeoUtils = {
-
-        init: function() {
-            // Converts from degrees to radians.
+    // Converts from degrees to radians.
             Math.toRadians = function(degrees) {
               return degrees * Math.PI / 180;
             };
@@ -12,7 +9,20 @@ define(['underscore'],function(_) {
             Math.toDegrees = function(radians) {
               return radians * 180 / Math.PI;
             };
-        },
+
+    var GeoUtils = {
+
+        // init: function() {
+        //     // Converts from degrees to radians.
+        //     Math.toRadians = function(degrees) {
+        //       return degrees * Math.PI / 180;
+        //     };
+             
+        //     // Converts from radians to degrees.
+        //     Math.toDegrees = function(radians) {
+        //       return radians * 180 / Math.PI;
+        //     };
+        // },
 
         distance: function(point1,point2) {
 
@@ -162,6 +172,11 @@ define(['underscore'],function(_) {
 
             var self = this;
 
+            if(_.isUndefined(nbTotalPoints)) {
+                console.log("ERROR nbTotalPoints undefined");
+                return;
+            }
+
             var allIntermediatesPoints = {};
             var collectionOfSingleSegments = [];
 
@@ -172,7 +187,7 @@ define(['underscore'],function(_) {
             var nbTotalPointsGenerated = 0;
 
             if(arrayPoints.length < 3 ) {
-                allIntermediatesPoints = self.generateIntermediatePoints(arrayPoints[0],arrayPoints[1]);
+                allIntermediatesPoints = self.generateIntermediatePoints(arrayPoints[0],arrayPoints[1],nbTotalPoints);
             }
             else {
                 //Generate distance of all individual segments and compute total distance

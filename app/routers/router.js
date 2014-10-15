@@ -13,7 +13,7 @@ define([
             routes: {
                 '':                                     'streetwalk',
                 'streetwalk':                           'streetwalk',
-                'streetwalk/:way/:nbImages':            'streetwalk'
+                'streetwalk/:way':                      'streetwalk'
              },
 
         initialize: function() {
@@ -21,10 +21,14 @@ define([
 
         },
 
-        streetwalk: function(way,nbImages) {
+        streetwalk: function(wayName) {
+
+            if(_.isUndefined(wayName)) {
+                wayName = "way1";
+            }
+
             var streetWalkView = new StreetWalkView({
-                way : way,
-                nbImages : nbImages
+                wayName : wayName
             });
 
             streetWalkView = AppView.show(streetWalkView);

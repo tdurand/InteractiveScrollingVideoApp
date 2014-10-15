@@ -1,19 +1,20 @@
 define(['jquery',
         'underscore',
         'backbone',
-        'models/Way',
+        'models/Ways',
         'models/Sounds',
         'utils/GeoUtils',
         'text!templates/streetwalk/streetWalkViewTemplate.html',
         'text!templates/streetwalk/streetWalkLoadingViewTemplate.html',
-        'mapbox'
+        'text!templates/streetwalk/streetWalkChoosePathViewTemplate.html'
         ],
 function($, _, Backbone,
-                Way,
+                Ways,
                 Sounds,
                 GeoUtils,
                 streetWalkViewTemplate,
-                streetWalkLoadingViewTemplate){
+                streetWalkLoadingViewTemplate,
+                streetWalkChoosePathViewTemplate){
 
   var StreetWalkView = Backbone.View.extend({
 
@@ -30,16 +31,7 @@ function($, _, Backbone,
     initialize : function(params) {
         var self = this;
 
-        GeoUtils.init();
-
-        // if(params.way === undefined) {
-        //     self.way = "casaparepositionstabilized";
-        //     self.nbImg = globalNbPoints;
-        // }
-        // else {
-        //     self.way = params.way;
-        //     self.nbImg = params.nbImages;
-        // }
+        self.wayName = params.wayName;
     },
 
     initMap: function() {
@@ -50,6 +42,7 @@ function($, _, Backbone,
             zoomControl: false,
             attributionControl: false
         });
+
 
         self.map.on("load", function() {
             self.mapLoaded = true;
@@ -80,24 +73,8 @@ function($, _, Backbone,
 
         self.firstScroll = true;
 
-        var nbStills = 30;
-
-        self.way = new Way({
-            nbStills : nbStills,
-            wayName: "test",
-            wayPath: GeoUtils.prepareWayPathFromGeoJSONLine([[
-                    -75.57004809379578,
-                    6.251336217688977
-                    ],
-                    [
-                    -75.56969404220581,
-                    6.252080103717009
-                    ],
-                    [
-                    -75.56892424821852,
-                    6.251730824029151
-                    ]],nbStills)
-        });
+        self.way = Ways.where({ wayName : self.wayName})[0];
+        self.way.fetch();
 
         self.way.on("updatePercentageLoaded", function() {
             self.updateLoadingIndicator(self.way.percentageLoaded);
@@ -213,11 +190,11 @@ function($, _, Backbone,
             self.firstScroll = false;
         }
 
-        if(imgNb > self.way.wayStills.nbImages-1 && self.isFirstWay) {
+        if(imgNb >= self.way.wayStills.nbImages-1) {
             self.$el.find(".chooseWay").show();
-        }
-        else if(!self.firstScroll && !self.isFirstWay && imgNb === 0) {
-            self.$el.find(".chooseWay").show();
+            self.$el.find(".chooseWay").html(_.template(streetWalkChoosePathViewTemplate,{
+                wayConnectionsEnd:self.way.wayConnectionsEnd
+            }));
         }
         else {
             self.$el.find(".chooseWay").hide();
@@ -314,7 +291,8 @@ function($, _, Backbone,
     onClose: function(){
       //Clean
       this.undelegateEvents();
-      this.Stills.clear();
+      this.way.clear();
+      this.map.remove();
       this.animating = false;
     }
 

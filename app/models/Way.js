@@ -1,7 +1,8 @@
 define(['jquery',
         'underscore',
         'backbone',
-        'models/Stills'
+        'models/Stills',
+        'utils/GeoUtils'
         ],
 function($, _, Backbone,
                 Stills){
@@ -38,7 +39,9 @@ function($, _, Backbone,
 
             self.nbStills = params.nbStills;
             self.wayName = params.wayName;
+            params.wayPath = GeoUtils.prepareWayPathFromGeoJSONLine(params.wayPath,self.nbStills);
             self.wayPath = params.wayPath;
+            self.wayConnectionsEnd = params.wayConnectionsEnd;
 
             //Create the stills collection for this way
             self.wayStills = new Stills();
@@ -54,12 +57,17 @@ function($, _, Backbone,
                 self.loadingFinished = true;
                 self.trigger("loadingFinished");
             });
+        },
 
+        fetch: function() {
+            var self = this;
             self.wayStills.fetch();
+        },
+
+        clear: function() {
+            var self = this;
+            self.wayStills.clear();
         }
-
-
-
 
   });
 

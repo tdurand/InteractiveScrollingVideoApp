@@ -2,6 +2,7 @@ require.config({
     baseUrl: 'app',
     paths: {
         jquery:       'libs/vendor/jquery-2.0.3.min',
+        json:         'libs/vendor/json-0.3.1',
         underscore:   'libs/vendor/lodash-2.2.1.min',
         backbone:     'libs/vendor/backbone-1.1.0.min',
         popcorn:      'libs/vendor/popcorn-complete-1.3',
@@ -34,13 +35,14 @@ require.config({
 define(['jquery',
         'underscore',
         'backbone',
-        'routers/router',
         'fastclick',
-        'utils/Logger'], function($, _,
+        'utils/Logger',
+        'routers/router',
+        'mapbox'], function($, _,
                             Backbone,
-                            Router,
                             FastClick,
-                            LOGGER) {
+                            LOGGER,
+                            Router) {
 
     $(document).ready(function() {
 
