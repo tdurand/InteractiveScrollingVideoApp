@@ -1,7 +1,7 @@
 define(['jquery',
         'underscore',
         'backbone',
-        'models/Stills',
+        'models/Way',
         'models/Sounds',
         'utils/GeoUtils',
         'text!templates/streetwalk/streetWalkViewTemplate.html',
@@ -9,7 +9,7 @@ define(['jquery',
         'mapbox'
         ],
 function($, _, Backbone,
-                StillsCollection,
+                Way,
                 Sounds,
                 GeoUtils,
                 streetWalkViewTemplate,
@@ -32,14 +32,14 @@ function($, _, Backbone,
 
         GeoUtils.init();
 
-        if(params.way === undefined) {
-            self.way = "casaparepositionstabilized";
-            self.nbImg = globalNbPoints;
-        }
-        else {
-            self.way = params.way;
-            self.nbImg = params.nbImages;
-        }
+        // if(params.way === undefined) {
+        //     self.way = "casaparepositionstabilized";
+        //     self.nbImg = globalNbPoints;
+        // }
+        // else {
+        //     self.way = params.way;
+        //     self.nbImg = params.nbImages;
+        // }
     },
 
     initMap: function() {
@@ -58,16 +58,9 @@ function($, _, Backbone,
             //Center map every 500ms
             //TODO ONLY IF POSITION CHANGED
             setInterval(function() {
-                self.map.panTo(self.intermediatePoints[self.currentStill.id]);
+                self.map.panTo(self.way.wayPath[self.currentStill.id]);
             },500);
         });
-
-        self.intermediatePoints = GeoUtils.generateIntermediatePointsOfArray(globalLatLongPoints,
-                globalNbPoints);
-
-        window.globalIntermediatePoints = self.intermediatePoints;
-
-        console.log(JSON.stringify(self.intermediatePoints));
     },
 
     initSounds: function() {
@@ -87,19 +80,30 @@ function($, _, Backbone,
 
         self.firstScroll = true;
 
-        self.Stills = new StillsCollection();
-        self.Stills.init({
-            nbStills : parseInt(self.nbImg,10),
-            pathToStills: "data/"+self.way
+        var nbStills = 30;
+
+        self.way = new Way({
+            nbStills : nbStills,
+            wayName: "test",
+            wayPath: GeoUtils.prepareWayPathFromGeoJSONLine([[
+                    -75.57004809379578,
+                    6.251336217688977
+                    ],
+                    [
+                    -75.56969404220581,
+                    6.252080103717009
+                    ],
+                    [
+                    -75.56892424821852,
+                    6.251730824029151
+                    ]],nbStills)
         });
 
-        self.Stills.fetch();
-
-        self.Stills.on("updatePourcentageLoaded", function() {
-            self.updateLoadingIndicator(self.Stills.pourcentageLoaded);
+        self.way.on("updatePercentageLoaded", function() {
+            self.updateLoadingIndicator(self.way.percentageLoaded);
         });
 
-        self.Stills.on("loadingFinished", function() {
+        self.way.on("loadingFinished", function() {
             self.animating = true;
             self.render();
         });
@@ -136,12 +140,14 @@ function($, _, Backbone,
     renderImg: function(imgNb) {
         var self = this;
 
+        console.log("RENDER IMGNB" + imgNb);
+
         if(self.currentStill && self.currentStill.id == imgNb) {
             //no need to render again same still
             return;
         }
 
-        self.currentStill = self.Stills.get(imgNb);
+        self.currentStill = self.way.wayStills.get(imgNb);
 
         if(!self.currentStill.loaded) {
             console.log("IMG NB NOT LOADED :" +imgNb);
@@ -150,7 +156,7 @@ function($, _, Backbone,
               return a - b;
             }
             //Get closest still loaded : TODO FIND THE BEST ALGORITHM, this one is not so optimized and insert the still in the array
-            self.currentStill = self.Stills.get(self.Stills.stillLoaded.push( imgNb ) && self.Stills.stillLoaded.sort(sortNumber)[ self.Stills.stillLoaded.indexOf( imgNb ) - 1 ]);
+            self.currentStill = self.way.wayStills.get(self.way.wayStills.stillLoaded.push( imgNb ) && self.way.wayStills.stillLoaded.sort(sortNumber)[ self.way.wayStills.stillLoaded.indexOf( imgNb ) - 1 ]);
 
 
             console.log("Load IMG NB instead:" +self.currentStill.id);
@@ -180,8 +186,8 @@ function($, _, Backbone,
         }
 
         //render first still
-        self.currentStill = self.Stills.first();
-        var pathFirstStill = self.Stills.first().get("srcLowRes");
+        self.currentStill = self.way.wayStills.first();
+        var pathFirstStill = self.way.wayStills.first().get("srcLowRes");
 
         //render high res after 100ms (TODO DUPLICATE)
         self.highResLoadingInterval = setTimeout(function() {
@@ -207,7 +213,7 @@ function($, _, Backbone,
             self.firstScroll = false;
         }
 
-        if(imgNb > self.Stills.nbImages-1 && self.isFirstWay) {
+        if(imgNb > self.way.wayStills.nbImages-1 && self.isFirstWay) {
             self.$el.find(".chooseWay").show();
         }
         else if(!self.firstScroll && !self.isFirstWay && imgNb === 0) {
@@ -243,11 +249,11 @@ function($, _, Backbone,
 
             //Change image
             var availableHeigth = (self.bodyHeight - window.innerHeight);
-            var imgNb = Math.floor( self.currentPosition / availableHeigth * self.Stills.length);
+            var imgNb = Math.floor( self.currentPosition / availableHeigth * self.way.wayStills.length);
 
             //Make sure imgNb is in bounds (on chrome macosx we can scroll more than height (rebound))
             if(imgNb < 0) { imgNb = 0; }
-            if(imgNb >= self.Stills.length) { imgNb = self.Stills.length-1; }
+            if(imgNb >= self.way.wayStills.length) { imgNb = self.way.wayStills.length-1; }
 
             //Render image
             self.renderImg(imgNb);
@@ -265,7 +271,7 @@ function($, _, Backbone,
 
             //Update sounds volume
             if(self.sounds) {
-                self.sounds.updateSounds(self.intermediatePoints[self.currentStill.id]);
+                self.sounds.updateSounds(self.way.wayPath[self.currentStill.id]);
             }
 
         }
@@ -285,13 +291,13 @@ function($, _, Backbone,
         }
 
         if(self.markerMap) {
-            self.markerMap.setLatLng(self.intermediatePoints[stillId]);
+            self.markerMap.setLatLng(self.way.wayPath[stillId]);
         }
         else {
-            if(self.map && self.intermediatePoints) {
-                self.markerMap = L.marker(self.intermediatePoints[stillId]).addTo(self.map);
+            if(self.map && self.way.wayPath) {
+                self.markerMap = L.marker(self.way.wayPath[stillId]).addTo(self.map);
                 if(stillId <= 1) {
-                    self.map.panTo(self.intermediatePoints[stillId]);
+                    self.map.panTo(self.way.wayPath[stillId]);
                 }
             }
             

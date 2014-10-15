@@ -110,6 +110,12 @@ define(['underscore'],function(_) {
             });
 
             if(newArraySegments.length+1 >= nbTotalPoints) {
+                //Hack to avoid having nbPoint + 1
+                if(_.size(arrayPoints) > nbTotalPoints) {
+                    arrayPoints = _.reject(arrayPoints,function(point,index) {
+                        return parseInt(index, 10) >= nbTotalPoints;
+                    });
+                }
                 return arrayPoints;
             }
             else {
@@ -204,6 +210,27 @@ define(['underscore'],function(_) {
 
             return allIntermediatesPoints;
 
+        },
+
+        invertArrayLongLatToLatLong: function(lonLatArray) {
+
+            var latLonArray = [];
+
+            $.each(lonLatArray,function(lonLatIndex,lonLat) {
+                latLonArray.push([lonLat[1],lonLat[0]]);
+            });
+
+            return latLonArray;
+        },
+
+        prepareWayPathFromGeoJSONLine : function(geoJsonLinePath,nbPoints) {
+            var self = this;
+            //Invert long-lat to lat-long
+            geoJsonLinePath = self.invertArrayLongLatToLatLong(geoJsonLinePath);
+
+            var path = self.generateIntermediatePointsOfArray(geoJsonLinePath,nbPoints);
+
+            return path;
         }
 
     };
