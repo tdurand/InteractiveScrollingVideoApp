@@ -74,6 +74,7 @@ function($, _, Backbone,
         self.firstScroll = true;
 
         self.way = Ways.where({ wayName : self.wayName})[0];
+
         self.way.fetch();
 
         self.way.on("updatePercentageLoaded", function() {
@@ -147,6 +148,8 @@ function($, _, Backbone,
 
     renderImgHighRes: function() {
         var self = this;
+
+        console.log("HIGH RES RENDER");
 
         self.currentStill.loadHighRes(function() {
             $(self.elImg).attr("src", self.currentStill.get("srcHighRes"));
@@ -228,29 +231,34 @@ function($, _, Backbone,
             var availableHeigth = (self.bodyHeight - window.innerHeight);
             var imgNb = Math.floor( self.currentPosition / availableHeigth * self.way.wayStills.length);
 
-            //Make sure imgNb is in bounds (on chrome macosx we can scroll more than height (rebound))
-            if(imgNb < 0) { imgNb = 0; }
-            if(imgNb >= self.way.wayStills.length) { imgNb = self.way.wayStills.length-1; }
-
-            //Render image
-            self.renderImg(imgNb);
-            
-            //Render elements at this position:
-            self.renderElements(imgNb);
-            $("body").removeClass('not-moving');
-
-            //Render highres after 100ms
-            clearTimeout(self.highResLoadingInterval);
-            self.highResLoadingInterval = setTimeout(function() {
-                self.renderImgHighRes();
-                $("body").addClass('not-moving');
-            },80);
-
-            //Update sounds volume
-            if(self.sounds) {
-                self.sounds.updateSounds(self.way.wayPath[self.currentStill.id]);
+            //Do not render same img (we can have changed position a bit but do not have image for this position)
+            if(imgNb == self.currentStill.id) {
+                console.log("DO NOT RENDER SAME STILL " + imgNb);
             }
+            else {
 
+                //Make sure imgNb is in bounds (on chrome macosx we can scroll more than height (rebound))
+                if(imgNb < 0) { imgNb = 0; }
+                if(imgNb >= self.way.wayStills.length) { imgNb = self.way.wayStills.length-1; }
+
+                //Render image
+                self.renderImg(imgNb);
+                
+                //Render elements at this position:
+                self.renderElements(imgNb);
+
+                //Render highres after 100ms
+                clearTimeout(self.highResLoadingInterval);
+                self.highResLoadingInterval = setTimeout(function() {
+                    self.renderImgHighRes();
+                    $("body").addClass('not-moving');
+                },100);
+
+                // Update sounds volume
+                if(self.sounds) {
+                    self.sounds.updateSounds(self.way.wayPath[self.currentStill.id]);
+                }
+            }
         }
 
         window.requestAnimationFrame(function() {

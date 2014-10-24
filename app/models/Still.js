@@ -18,11 +18,12 @@ function($, _, Backbone){
 
         //TODO OVERRIDE SYNC METHOD TO PUT THIS THERE TO GET THE BACKBONE EVENTS
         var img = self.get("img");
-        img.src =  self.get("srcLowRes");
         img.onload = function() {
             console.log("Img :" + img.src);
             self.trigger("imgloaded");
         };
+        img.src =  self.get("srcLowRes");
+        
     },
 
     //TODO SEE IF WE CLEAR THE HIGHRES AFTER LOADING TO DO NOT OVERLOAD THE RAM

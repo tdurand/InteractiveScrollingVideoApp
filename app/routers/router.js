@@ -24,7 +24,7 @@ define([
         streetwalk: function(wayName) {
 
             if(_.isUndefined(wayName)) {
-                wayName = "way1";
+                wayName = "carabobo-cl52-cl51";
             }
 
             var streetWalkView = new StreetWalkView({

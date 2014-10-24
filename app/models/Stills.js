@@ -28,14 +28,14 @@ function($, _, Backbone,
     fetch: function() {
         var self = this;
 
-        var accurate = 1;
-        var bearingTemp = 0;
+        var accurate = 2;
+        // var bearingTemp = 0;
 
-        //TODO : better progressive loading, populate first frames first
-        //$.each([20,10,5,2,1], function(index, val) {
+        // TODO : better progressive loading, populate first frames first
+        $.each([20,10,5,2,1], function(index, val) {
 
-            //for (var i = 0; i < self.nbImages; i+val) {
-            for (var i = 0; i < self.nbImages; i++) {
+            for (var i = 0; i < self.nbImages; i+=val) {
+            // for (var i = 0; i < self.nbImages; i++) {
 
                 if(self.loadingStopped) {
                     break;
@@ -44,18 +44,18 @@ function($, _, Backbone,
                 //If still isn't yet loaded
                 if(self.get(i) === undefined) {
 
-                    if(i < self.nbImages - 1) {
-                        bearingTemp = GeoUtils.getBearing(self.stillsPath[i],self.stillsPath[i+1]);
-                    }
+                    // if(i < self.nbImages - 1) {
+                    //     bearingTemp = GeoUtils.getBearing(self.stillsPath[i],self.stillsPath[i+1]);
+                    // }
 
                     var still = new Still({
                         id:i,
                         // srcLowRes:"http://tdurand.github.io/scrollingvideo/"+self.pathToStills+"way"+self.lpad(i, 3)+".jpg",
                         // srcHighRes:"http://tdurand.github.io/scrollingvideo/"+self.pathToStills+"way"+self.lpad(i, 3)+".jpg"
-                        // srcLowRes:self.pathToStills+"/lowres/way"+self.lpad(i, 3)+".jpg",
-                        // srcHighRes:self.pathToStills+"/highres/way"+self.lpad(i, 3)+".jpg",
-                        srcLowRes:"http://maps.googleapis.com/maps/api/streetview?size=500x280&location="+self.stillsPath[i][0]+","+self.stillsPath[i][1]+"&fov=180&heading="+bearingTemp+"&pitch=5&key=AIzaSyBcQbYugBpXYmTvHVqBmmTa6EM0PHZZ28k",
-                        srcHighRes:"http://maps.googleapis.com/maps/api/streetview?size=500x280&location="+self.stillsPath[i][0]+","+self.stillsPath[i][1]+"&fov=180&heading="+bearingTemp+"&pitch=5&key=AIzaSyBcQbYugBpXYmTvHVqBmmTa6EM0PHZZ28k"
+                        srcLowRes:"data/"+self.pathToStills+"/lowres/way"+self.lpad(i, 3)+".jpg",
+                        srcHighRes:"data/"+self.pathToStills+"/highres/way"+self.lpad(i, 3)+".jpg"
+                        // srcLowRes:"http://maps.googleapis.com/maps/api/streetview?size=500x280&location="+self.stillsPath[i][0]+","+self.stillsPath[i][1]+"&fov=180&heading="+bearingTemp+"&pitch=5&key=AIzaSyBcQbYugBpXYmTvHVqBmmTa6EM0PHZZ28k",
+                        // srcHighRes:"http://maps.googleapis.com/maps/api/streetview?size=500x280&location="+self.stillsPath[i][0]+","+self.stillsPath[i][1]+"&fov=180&heading="+bearingTemp+"&pitch=5&key=AIzaSyBcQbYugBpXYmTvHVqBmmTa6EM0PHZZ28k"
 
                     });
 
@@ -77,7 +77,7 @@ function($, _, Backbone,
                 
             }
              
-        // });
+        });
     },
 
     lpad: function(value, padding) {

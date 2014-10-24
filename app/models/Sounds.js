@@ -15,13 +15,17 @@ function($, _, Backbone,
         var self = this;
 
         self.add([
-          {position: [6.257793859679471,-75.61135411262512],
-            name:"pregonnegra",
-            db:30
+          {position: [6.2517228252549435,-75.5689188838005],
+            name:"esquina1",
+            db:100
            },
-          {position: [6.257884511393891,-75.61177790164948],
-            name:"bruitdefondmusic",
-            db:30
+          {position: [6.251370879068626,-75.56906640529631],
+            name:"esquina2",
+            db:100
+           },
+           {position: [6.250986937504368,-75.56924611330032],
+            name:"esquina3",
+            db:100
            }
         ]);
     },
