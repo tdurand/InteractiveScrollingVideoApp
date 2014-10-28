@@ -102,10 +102,14 @@ function($, _, Backbone, GeoUtils){
     calculateVolume: function(distance){
         var self = this;
         // Calculate volume by using Inverse Square Law
-        var vol = 1 / (distance * distance);
+        console.log("Distance: " + distance);
+        var vol = 1 / (distance);
         // Multiply distance volume by amplitude of sound (apply ceiling max of 1)
+        console.log("Distance linear: " + vol);
+        // vol = Math.min((vol * self.db), 1);
+        console.log("Multiply by DB amplitude"+ (vol * self.db));
+        // console.log("UPDATE VOLUME: " + vol);
         vol = Math.min((vol * self.db), 1);
-        console.log("UPDATE VOLUME: " + vol);
         return vol;
     }
 
