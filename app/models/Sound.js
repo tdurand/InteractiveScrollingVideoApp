@@ -120,6 +120,7 @@ function($, _, Backbone, GeoUtils){
         vol = Math.min((vol * self.db), 1);
         //Plot volume
         $("."+self.name+"volume").text(vol);
+        $("."+self.name+"distance").text(distance);
         $("."+self.name+"db").text(self.db);
         $("."+self.name+"db").val(self.db);
 
