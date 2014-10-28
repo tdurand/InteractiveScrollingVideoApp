@@ -27,7 +27,10 @@ function($, _, Backbone, GeoUtils){
         self.sound = new Howl({
           urls: ['data/sounds/' + self.name + '.mp3'],
           loop:true,
-          volume:0
+          volume:0,
+          onload: function() {
+            $("."+self.name+"load").text("loaded");
+          }
         });
 
         self.sound.play();
