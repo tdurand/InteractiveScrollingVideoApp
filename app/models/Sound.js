@@ -19,13 +19,13 @@ function($, _, Backbone, GeoUtils){
             imgHighRes: new Image()
         });
 
-        var name = self.get("name");
+        self.name = self.get("name");
         self.position = self.get("position");
         self.db = self.get("db");
 
 
         self.sound = new Howl({
-          urls: ['data/sounds/' + name + '.mp3'],
+          urls: ['data/sounds/' + self.name + '.mp3'],
           loop:true,
           volume:0
         });
@@ -103,6 +103,11 @@ function($, _, Backbone, GeoUtils){
         var self = this;
         // Calculate volume by using Inverse Square Law
         console.log("Distance: " + distance);
+
+        if($("."+self.name+"db").val() != 51) {
+            self.db = $("."+self.name+"db").val();
+        }
+
         var vol = 1 / (distance);
         // Multiply distance volume by amplitude of sound (apply ceiling max of 1)
         console.log("Distance linear: " + vol);
@@ -110,6 +115,11 @@ function($, _, Backbone, GeoUtils){
         console.log("Multiply by DB amplitude"+ (vol * self.db));
         // console.log("UPDATE VOLUME: " + vol);
         vol = Math.min((vol * self.db), 1);
+        //Plot volume
+        $("."+self.name+"volume").text(vol);
+        $("."+self.name+"db").text(self.db);
+        $("."+self.name+"db").val(self.db);
+
         return vol;
     }
 

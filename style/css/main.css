@@ -82,6 +82,14 @@ html, body {
 }
 
 /* line 31, ../sass/module/streetwalk.scss */
+.streetwalk-soundcontrol {
+  position: fixed;
+  bottom: 50px;
+  right: 10px;
+  color: white;
+}
+
+/* line 38, ../sass/module/streetwalk.scss */
 .streetwalk-title {
   position: absolute;
   left: 50%;
@@ -93,20 +101,20 @@ html, body {
   -o-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
 }
-/* line 42, ../sass/module/streetwalk.scss */
+/* line 49, ../sass/module/streetwalk.scss */
 .streetwalk-title h1 {
   color: white;
   font-size: 4rem;
   font-weight: bold;
 }
-/* line 48, ../sass/module/streetwalk.scss */
+/* line 55, ../sass/module/streetwalk.scss */
 .streetwalk-title .arrow-down {
   color: white;
   font-size: 4rem;
   text-align: center;
 }
 
-/* line 57, ../sass/module/streetwalk.scss */
+/* line 64, ../sass/module/streetwalk.scss */
 .loadingNextWay h1 {
   color: white;
   font-size: 4rem;
@@ -122,7 +130,7 @@ html, body {
   transform: translate(-50%, -50%);
 }
 
-/* line 74, ../sass/module/streetwalk.scss */
+/* line 81, ../sass/module/streetwalk.scss */
 .streetwalkImg, .element-fixed, .blurImg {
   position: fixed;
   top: 0;
@@ -133,18 +141,18 @@ html, body {
   height: 100%;
 }
 
-/* line 85, ../sass/module/streetwalk.scss */
+/* line 92, ../sass/module/streetwalk.scss */
 .element-fixed {
   display: none;
 }
 
-/* line 89, ../sass/module/streetwalk.scss */
+/* line 96, ../sass/module/streetwalk.scss */
 .arrow {
   width: 200px;
   fill: white;
 }
 
-/* line 94, ../sass/module/streetwalk.scss */
+/* line 101, ../sass/module/streetwalk.scss */
 .chooseWayContent {
   position: absolute;
   left: 50%;
@@ -157,7 +165,7 @@ html, body {
   transform: translate(-50%, -50%);
 }
 
-/* line 106, ../sass/module/streetwalk.scss */
+/* line 113, ../sass/module/streetwalk.scss */
 .trame-video {
   background: url("../../images/trame-video.png") repeat;
   height: 100%;
@@ -167,7 +175,7 @@ html, body {
   opacity: 1;
 }
 
-/* line 115, ../sass/module/streetwalk.scss */
+/* line 122, ../sass/module/streetwalk.scss */
 body.not-moving .trame-video {
   opacity: 0;
   -webkit-transition: opacity 0.5s ease;

@@ -182,6 +182,20 @@ function($, _, Backbone,
 
         self.initMap();
         self.initSounds();
+
+        if(self.sounds) {
+            self.sounds.updateSounds(self.way.wayPath[self.currentStill.id]);
+        }
+
+        //set handler:
+        $(".esquina1db").on("change", function() {
+            self.sounds.updateSounds(self.way.wayPath[self.currentStill.id]);
+        });
+
+        $(".esquina2db").on("change", function() {
+            self.sounds.updateSounds(self.way.wayPath[self.currentStill.id]);
+        });
+
         self.computeAnimation(true);
     },
 
